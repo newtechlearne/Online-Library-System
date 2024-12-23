@@ -1,0 +1,8 @@
+// src/redux/store.js
+
+import { createStore } from "redux";
+import bookReducer from "./reducers/bookReducer";
+
+const store = createStore(bookReducer);
+
+export default store;
