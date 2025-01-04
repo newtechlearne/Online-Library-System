@@ -1,9 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { categories, books } from "../utils/dummyData";
-
-
-
 
 // Welcome Message Component
 const Welcome = () => (
@@ -28,7 +25,7 @@ const CategoryList = () => (
 );
 
 // Popular Books Component
-const PopularBooks = () => (
+const PopularBooks = ({ books }) => (
   <div>
     <h2>Popular Books</h2>
     <ul>
@@ -44,13 +41,45 @@ const PopularBooks = () => (
 );
 
 // HomePage Component
-const HomePage = () => (
-  <div>
-   
-    <Welcome />
-    <CategoryList />
-    <PopularBooks />
-  </div>
-);
+const HomePage = () => {
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [filteredBooks, setFilteredBooks] = useState(books); // State for filtered books
+
+  // Handle search input changes
+  const handleSearch = (event) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = books.filter((book) =>
+      book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)
+    );
+    setFilteredBooks(filtered);
+  };
+
+  return (
+    <div>
+      <Welcome />
+
+      {/* Search Bar */}
+      <div style={{ textAlign: "center", margin: "20px 0" }}>
+        <input
+          type="text"
+          placeholder="Search books by title or author..."
+          value={searchQuery}
+          onChange={handleSearch}
+          style={{
+            padding: "10px",
+            width: "80%",
+            maxWidth: "500px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
+      </div>
+
+      <CategoryList />
+      <PopularBooks books={filteredBooks} /> {/* Pass filtered books */}
+    </div>
+  );
+};
 
 export default HomePage;
