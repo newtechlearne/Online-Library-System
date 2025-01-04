@@ -1,19 +1,22 @@
+// src/components/BrowseBooksPage.js
 import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom"; // Import useParams for dynamic routing
-import { books as dummyBooks } from "../utils/dummyData"; // Import books from dummyData
+import { useLocation, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { addBook } from "../redux/bookSlice"; // Import the action for adding books
 
 const BrowseBooksPage = () => {
   const { category } = useParams(); // Extract the category from the URL
   const location = useLocation(); // Get location object to access state
-  const [books, setBooks] = useState(dummyBooks); // Initialize with dummy data
-  const [filteredBooks, setFilteredBooks] = useState(dummyBooks); // Initialize filtered books
+  const dispatch = useDispatch(); // Get the dispatch function for Redux
+  const books = useSelector((state) => state.books.books); // Fetch books from Redux store
+  const [filteredBooks, setFilteredBooks] = useState([]); // Initialize filtered books as empty array
 
   useEffect(() => {
     // Check if a new book is passed via state from AddBookPage
     if (location.state && location.state.newBook) {
-      setBooks((prevBooks) => [...prevBooks, location.state.newBook]);
+      dispatch(addBook(location.state.newBook)); // Dispatch action to add the new book to Redux store
     }
-  }, [location.state]); // Effect will run when state changes
+  }, [location.state, dispatch]); // Effect will run when state changes
 
   useEffect(() => {
     // Filter books based on the category from URL

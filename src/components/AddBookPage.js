@@ -1,7 +1,10 @@
 // src/pages/AddBookPage.js
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Use useNavigate hook
-import { categories } from "../utils/dummyData"; // Import categories from dummyData
+import { useDispatch } from "react-redux";
+// Correct import path (assuming bookSlice.js is in 'src/redux/')
+import { addBook } from "../redux/bookSlice";
+
+import { categories } from "../utils/dummyData";
 
 const AddBookPage = () => {
   const [title, setTitle] = useState("");
@@ -11,7 +14,7 @@ const AddBookPage = () => {
   const [rating, setRating] = useState("");
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate(); // Use useNavigate hook
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,18 +24,25 @@ const AddBookPage = () => {
       return;
     }
 
-    // Create a new book object
     const newBook = {
-      id: Date.now(), // Unique ID for the new book
+      id: Date.now(),
       title,
       author,
       category,
       description,
-      rating: parseFloat(rating), // Ensure the rating is a number
+      rating: parseFloat(rating),
     };
 
-    // Redirect to Browse Books page with new book data as state
-    navigate("/browse-books", { state: { newBook } });
+    // Dispatch the new book to the Redux store
+    dispatch(addBook(newBook));
+
+    // Reset form fields
+    setTitle("");
+    setAuthor("");
+    setCategory("");
+    setDescription("");
+    setRating("");
+    setError(null);
   };
 
   return (
@@ -87,7 +97,8 @@ const AddBookPage = () => {
             value={rating}
             onChange={(e) => setRating(e.target.value)}
             placeholder="Rating"
-            min="1" max="5"
+            min="1"
+            max="5"
           />
         </label>
         <button type="submit">Add Book</button>
